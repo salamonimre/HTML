@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codecool — Codecool_Board presentation_202601.pdf | Strategos Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0A0A0F;
+    --bg-card: #12121A;
+    --bg-elevated: #1A1A25;
+    --bg-surface: #22222E;
+    --border: #2A2A3A;
+    --text-primary: #F5F5F7;
+    --text-secondary: #A1A1AA;
+    --text-tertiary: #6B6B76;
+    --accent-blue: #0A84FF;
+    --accent-green: #30D158;
+    --accent-red: #FF453A;
+    --accent-orange: #FF9F0A;
+    --accent-purple: #BF5AF2;
+    --accent-teal: #64D2FF;
+    --company-color: #FF6B35;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  /* ── Cover ── */
+  .cover {
+    position: relative;
+    padding: 48px 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--company-color);
+  }
+  .cover-brand {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 24px;
+  }
+  .cover-company {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--company-color);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .cover-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .cover-meta {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .cover-meta span { display: flex; align-items: center; gap: 4px; }
+  .cover-score {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    text-align: center;
+  }
+  .cover-score-value {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .cover-score-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .section-body { padding: 24px; }
+
+  /* ── Executive Summary ── */
+  .exec-summary p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+  .justification {
+    font-size: 14px;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--border);
+    padding-left: 16px;
+    margin-top: 12px;
+  }
+
+  /* ── KPI Grid ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    padding: 20px;
+  }
+  .kpi-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+  .kpi-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .kpi-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kpi-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .kpi-delta { font-weight: 500; }
+
+  /* ── Benchmarks ── */
+  .bench-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .bench-table th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-tertiary);
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+  .bench-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .bench-table tr:last-child td { border-bottom: none; }
+
+  /* ── Findings ── */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .findings-col h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .findings-col h3 .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .finding-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .finding-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .finding-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Board Questions ── */
+  .question-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .question-priority {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .question-context {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+  .question-expected {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  /* ── Agent Deep Dive ── */
+  details.agent-section {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+    background: var(--bg-elevated);
+  }
+  details.agent-section summary {
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+  }
+  details.agent-section summary::-webkit-details-marker { display: none; }
+  details.agent-section summary::before {
+    content: '\25B6';
+    font-size: 10px;
+    color: var(--text-tertiary);
+    transition: transform 0.2s;
+  }
+  details.agent-section[open] summary::before {
+    transform: rotate(90deg);
+  }
+  .agent-body {
+    padding: 0 16px 16px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .agent-body p { margin-bottom: 10px; }
+  .agent-body h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: capitalize;
+    margin: 14px 0 6px;
+  }
+  .agent-body ul { padding-left: 20px; margin-bottom: 10px; }
+  .agent-body li { margin-bottom: 4px; }
+  .agent-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    color: var(--text-tertiary);
+  }
+  .findings-list { list-style: none; padding: 0; }
+  .findings-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .findings-list li:last-child { border-bottom: none; }
+  .highlight-item::before { content: '\2713 '; color: var(--accent-green); font-weight: 700; }
+  .concern-item::before { content: '\26A0 '; color: var(--accent-red); }
+  .muted { color: var(--text-tertiary); font-style: italic; }
+
+  /* ── Footer ── */
+  .report-footer {
+    text-align: center;
+    padding: 32px 0;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px; }
+    .cover { padding: 32px 24px; }
+    .cover-company { font-size: 24px; }
+    .cover-score { position: static; margin-top: 20px; text-align: left; }
+    .cover-score-value { font-size: 40px; }
+    .kpi-grid { grid-template-columns: 1fr; }
+    .findings-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    body { background: #fff; color: #111; }
+    .section { border-color: #ddd; background: #fff; }
+    .cover { background: #fafafa; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-brand">STRATEGOS</div>
+    <div class="cover-company">Codecool</div>
+    <div class="cover-title">Codecool_Board presentation_202601.pdf</div>
+    <div class="cover-meta">
+      <span>February 27, 2026</span>
+      <span>Board Report</span>
+      <span>Codecool Board</span>
+      <span>EdTech</span>
+    </div>
+    
+    <div class="cover-score">
+      <div class="cover-score-value" style="color: #FF9F0A">5</div>
+      <div class="cover-score-label">/10 Health Score</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section">
+    <div class="section-header"><h2>Executive Summary</h2></div>
+    <div class="section-body exec-summary">
+      <p>Codecool is executing a high-stakes pivot from B2C bootcamp to B2B enterprise skilling, with December 2025 revenues hitting €726k (75% above plan) driven by B2B growth that offset a €979k YoY B2C decline. However, this strong headline masks structural fragility: 70%+ revenue concentration in 3 clients (Google, MBH, OTP), a collapsing Poland entity, €880k cash providing thin runway, and critical pipeline deals (€990k MBH Digital Leap III, €197k MBH IT upskilling) still lacking written confirmation. The company is surviving but not yet thriving—success hinges on diversifying the B2B client base, navigating EU AI Act compliance by August 2026, and reinventing the B2C model around AI-augmented skills before the traditional bootcamp market erodes further.</p>
+      <div class="justification">Strong execution on B2B pivot with €1,235k YoY growth demonstrates commercial capability, but dangerous client concentration (3 accounts = majority of revenue), Poland bankruptcy, declining B2C segment (-€979k YoY), and limited cash runway (€880k with unconfirmed €1.2M+ pipeline) create existential risk. The company is at an inflection point—the margin for error is extremely thin.</div>
+    </div>
+  </div>
+
+  <!-- KPI GRID -->
+  
+  <div class="section">
+    <div class="section-header"><h2>Key Metrics</h2></div>
+    <div class="kpi-grid">
+      
+      <div class="kpi-card">
+        <div class="kpi-name">December 2025 Revenue</div>
+        <div class="kpi-value">€726k</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #30D158"></span>
+          <span class="kpi-delta">+75% vs plan</span>
+          <span>vs €415k plan</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">December 2025 EBITDA</div>
+        <div class="kpi-value">€138k</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #30D158"></span>
+          <span class="kpi-delta">beat vs plan</span>
+          <span>vs plan (not specified)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">YTD 2025 Total Revenue Growth</div>
+        <div class="kpi-value">9% YoY growth</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #30D158"></span>
+          <span class="kpi-delta">+9% YoY</span>
+          <span>vs 2024 baseline</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">B2B Revenue Growth</div>
+        <div class="kpi-value">+€1,235k YoY</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #30D158"></span>
+          <span class="kpi-delta">+€1,235k YoY</span>
+          <span>vs 2024 B2B baseline</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">B2C Revenue Decline</div>
+        <div class="kpi-value">-€979k YoY</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #FF453A"></span>
+          <span class="kpi-delta">-€979k YoY</span>
+          <span>vs 2024 B2C baseline</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">Hungary Cash Position</div>
+        <div class="kpi-value">€880k</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #FF9F0A"></span>
+          <span class="kpi-delta">limited runway with unconfirmed pipeline</span>
+          <span>vs runway sufficiency</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">GO-status Students (Outsourcing Pipeline)</div>
+        <div class="kpi-value">30 in Dec 2025</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #FF9F0A"></span>
+          <span class="kpi-delta">-7 MoM</span>
+          <span>vs 37 in Nov 2025</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-name">Client Concentration (Top 3)</div>
+        <div class="kpi-value">~70%+ of B2B revenue</div>
+        <div class="kpi-meta">
+          <span class="kpi-dot" style="background: #FF453A"></span>
+          <span class="kpi-delta">extreme concentration</span>
+          <span>vs diversified portfolio target</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDUSTRY BENCHMARKS -->
+  
+  <div class="section">
+    <div class="section-header"><h2>Industry Benchmarks</h2></div>
+    <div class="section-body">
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Company</th>
+            <th>Benchmark</th>
+            <th>Gap</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td>Total Funding Raised</td>
+            <td><strong>$15.1M (€12.5M original)</strong></td>
+            <td>Ironhack €22M, Le Wagon €16M (top EU bootcamp competitors)</td>
+            <td style="color: #FF453A">-€3.5M to -€9.5M vs top EU peers</td>
+            <td style="font-size: 12px; color: var(--text-tertiary)">🔍 Crunchbase, Tracxn [2025]</td>
+          </tr>
+
+          <tr>
+            <td>Market Size and Growth</td>
+            <td><strong>Operating in $3.28B global bootcamp market</strong></td>
+            <td>$14.07B projected by 2032 (23.19% CAGR)</td>
+            <td style="color: #FF453A">Market growing rapidly but Codecool's B2C revenue declining</td>
+            <td style="font-size: 12px; color: var(--text-tertiary)">🔍 ResearchAndMarkets [Dec 2025]</td>
+          </tr>
+
+          <tr>
+            <td>Geographic Scale</td>
+            <td><strong>Effectively 1 country (Hungary) post-Poland bankruptcy, minimal Romania</strong></td>
+            <td>SDA merger promised 8-country CEE footprint</td>
+            <td style="color: #FF453A">87.5% geographic contraction from merger promise</td>
+            <td style="font-size: 12px; color: var(--text-tertiary)">📄 Board presentation [Dec 2025], 📚 Tech.eu [Sep 2022]</td>
+          </tr>
+
+          <tr>
+            <td>Client Concentration Risk</td>
+            <td><strong>~70%+ revenue from top 3 clients</strong></td>
+            <td>Best practice: no single client &gt;25% revenue</td>
+            <td style="color: #FF453A">Extreme concentration vs diversified portfolio standards</td>
+            <td style="font-size: 12px; color: var(--text-tertiary)">📄 Board presentation [Dec 2025]</td>
+          </tr>
+
+          <tr>
+            <td>Revenue Growth YoY</td>
+            <td><strong>9% YTD 2025 total revenue growth</strong></td>
+            <td>23.19% CAGR global bootcamp market growth</td>
+            <td style="color: #FF453A">-14.19pp vs market growth rate</td>
+            <td style="font-size: 12px; color: var(--text-tertiary)">📄 Board presentation [Dec 2025], 🔍 ResearchAndMarkets [Dec 2025]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- HIGHLIGHTS & CONCERNS -->
+  
+  <div class="section">
+    <div class="section-header"><h2>Highlights & Concerns</h2></div>
+    <div class="section-body">
+      <div class="findings-grid">
+        <div class="findings-col">
+          <h3><span class="dot" style="background: var(--accent-green)"></span> Highlights</h3>
+          
+          <div class="finding-card">
+            <div class="finding-text">December 2025 revenue €726k delivered 75% beat vs €415k plan, driven by B2B strength (€159k Google AI settlement + Q1 advance, €142k MBH Digital Leap project). YTD 2025 total revenues grew 9% YoY with B2B segment offsetting B2C decline.</div>
+            <div class="finding-meta">cfo &middot; 📄 Codecool CF and Sales Update [Jan 14, 2026] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">B2B segment grew €1,235k YoY, successfully compensating for €979k B2C revenue decline. B2B is now the primary revenue driver, validating the strategic pivot to enterprise skilling.</div>
+            <div class="finding-meta">big4-consultant &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">Strong B2B pipeline identified: MBH Digital Leap III extension (~€990k), MBH IT upskilling (€197k), Google AI expansion (above contracted €578k baseline), plus exploratory discussions with MNB, KBC, Raiffeisen, MOL, IBM, Uniqa.</div>
+            <div class="finding-meta">cfo &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">SDA merger (Sep 2022) created Central Europe's largest digital skilling platform operating across 8 countries with 300+ employees, training 15,000-20,000 individuals annually, working with 400+ global organizations including Accenture, Microsoft, Motorola.</div>
+            <div class="finding-meta">big4-consultant &middot; 📚 Tech.eu [Sep 13, 2022] &middot; medium</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">Global coding bootcamp market growing at 23.19% CAGR, projected to reach $14.07B by 2032 from $3.28B in 2025. Over 600 bootcamp programs now operate globally (up from &lt;100 in 2015), indicating significant market expansion.</div>
+            <div class="finding-meta">innovation-consultant &middot; 🔍 ResearchAndMarkets [Dec 2025], Course Report [2026] &middot; medium</div>
+          </div>
+          
+        </div>
+        <div class="findings-col">
+          <h3><span class="dot" style="background: var(--accent-red)"></span> Concerns</h3>
+          
+          <div class="finding-card">
+            <div class="finding-text">CRITICAL CONCENTRATION RISK: Top 3 B2B accounts (Google, MBH, OTP/Shiwa) likely represent 70%+ of B2B revenue. MBH Digital Leap III extension (~€990k) lacks written confirmation. Google AI expansion above €578k baseline still under negotiation.</div>
+            <div class="finding-meta">big4-consultant &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">Cash runway pressure: Hungary cash position at €880k with ~€100k unplanned overhead costs in 2025. Poland and Romania entities not contributing positively. Company fate hinges on timely conversion of unconfirmed pipeline deals totaling €1.2M+.</div>
+            <div class="finding-meta">cfo &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">B2C Full Stack bootcamp revenue declining structurally (€979k YoY drop) due to AI coding tools (Copilot, Cursor), free alternatives, and cyclical IT hiring slowdown. Traditional bootcamp model losing consumer willingness to pay.</div>
+            <div class="finding-meta">innovation-consultant &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">Poland entity (SDA) in bankruptcy proceedings, effectively destroying the promised 8-country CEE scale from 2022 merger. Geographic operations now concentrated in Hungary with minimal Romania contribution (€20k). Post-merger integration incomplete.</div>
+            <div class="finding-meta">big4-consultant &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">IT outsourcing market 'nearly stopped' in January 2026—clients not reaching out proactively, declining GO-status students (30 in Dec vs 37 in Nov). Cyclical downturn impacting junior placement model.</div>
+            <div class="finding-meta">innovation-consultant &middot; 📄 Board presentation [Dec 2025] &middot; high</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">EU AI Act compliance deadline August 2, 2026: Codecool's AI-enabled learning platforms likely classified as high-risk educational AI (Annex III Category 3), requiring technical documentation, risk management frameworks, quality management systems, human oversight. Non-compliance penalties up to €35M or 7% global turnover.</div>
+            <div class="finding-meta">cto-caio &middot; 🔍 EU AI Act Regulation 2024/1689 [Articles 9-17, Annex III] &middot; medium</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">December revenue beat driven by timing items and one-off collections that won't recur monthly—underlying normalized run-rate materially lower than €726k headline. CFO warns against extrapolating December performance.</div>
+            <div class="finding-meta">cfo &middot; 📄 Board presentation [Dec 2025] &middot; medium</div>
+          </div>
+
+          <div class="finding-card">
+            <div class="finding-text">EBITDA €138k beat in December driven partially by non-recurring timing effects. Normalized profitability run-rate requires scrutiny beyond headline numbers.</div>
+            <div class="finding-meta">cfo &middot; 📄 Board presentation [Dec 2025] &middot; medium</div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARD QUESTIONS -->
+  
+  <div class="section">
+    <div class="section-header"><h2>Board Questions</h2></div>
+    <div class="section-body">
+      
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF453A">high</span>
+        <div class="question-text">What is the written contractual status of MBH Digital Leap III extension (~€990k) and MBH IT upskilling (€197k)? When do we expect signed contracts vs verbal approvals?</div>
+        <div class="question-context">Company cash runway and 2026 viability hinge on these deals converting. Verbal approvals carry execution risk.</div>
+        <div class="question-expected">Expected: Specific timeline for contract signature, contractual terms, payment milestones, and contingency plan if deals delay or fall through.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: cfo</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF453A">high</span>
+        <div class="question-text">What is our client concentration by revenue? What percentage of 2025 revenue came from Google, MBH, and OTP/Shiwa individually and combined?</div>
+        <div class="question-context">70%+ concentration in 3 clients creates existential dependency risk. Board needs precise numbers to assess portfolio health.</div>
+        <div class="question-expected">Expected: Exact revenue % by top 5 clients, diversification roadmap, target concentration limits, and pipeline conversion timeline for new logos.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: big4-consultant</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF453A">high</span>
+        <div class="question-text">What is the normalized monthly revenue run-rate excluding December's one-off timing items (Google advance, settlement collections)? What should the board expect for Q1 2026 revenue?</div>
+        <div class="question-context">CFO warns December €726k includes non-recurring items. Board needs realistic forward guidance to assess cash sufficiency.</div>
+        <div class="question-expected">Expected: Normalized monthly run-rate, Q1 2026 revenue forecast with probability-weighted pipeline, and cash burn trajectory.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: cfo</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF453A">high</span>
+        <div class="question-text">What is the root cause analysis of the €979k YoY B2C revenue decline? Is this market-driven (AI tools, hiring cycles) or execution-driven (pricing, competition, product-market fit)?</div>
+        <div class="question-context">B2C historically fed the outsourcing model. If this is structural vs cyclical, strategy must change dramatically.</div>
+        <div class="question-expected">Expected: Quantitative demand analysis (lead volume, conversion rates, pricing elasticity), competitive benchmarking, and decision on B2C strategic role going forward.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: innovation-consultant</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF453A">high</span>
+        <div class="question-text">What is the EU AI Act compliance roadmap and budget? Which Codecool AI systems are classified as high-risk under Annex III Category 3, and what is the timeline to achieve August 2, 2026 compliance?</div>
+        <div class="question-context">Non-compliance penalties up to €35M or 7% global turnover. Also impacts competitive positioning with enterprise B2B clients who will demand compliant vendors.</div>
+        <div class="question-expected">Expected: AI system inventory and classification, compliance gap analysis, required technical documentation and human oversight implementations, budget estimate, and project plan with milestones.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: cto-caio</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF9F0A">medium</span>
+        <div class="question-text">What is the strategic plan for Poland post-bankruptcy? Are we pursuing market re-entry via Digiskills z.o.o., or is Poland being written off?</div>
+        <div class="question-context">Poland was 1/8th of the promised SDA merger scale. Board needs clarity on CEE geographic strategy and resource allocation.</div>
+        <div class="question-expected">Expected: Poland liability wind-down status, decision on market re-entry, Digiskills z.o.o. business plan and 6-month BD assignment results, and updated CEE footprint strategy.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: big4-consultant</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF9F0A">medium</span>
+        <div class="question-text">What actions are being taken to address the 'nearly stopped' IT outsourcing market? What is the conversion plan for the CodePool medior/senior initiative?</div>
+        <div class="question-context">Outsourcing market cyclical downturn + declining GO-status students (30 vs 37) threatens a historically profitable revenue stream.</div>
+        <div class="question-expected">Expected: Outsourcing market demand analysis, client outreach results, CodePool positioning and pricing strategy, demo day event plan, and 2026 placement targets.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: innovation-consultant</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #FF9F0A">medium</span>
+        <div class="question-text">How is management addressing the B2C product-market fit crisis? What curriculum changes toward AI-augmented development, prompt engineering, or data/AI career paths are being explored?</div>
+        <div class="question-context">Global bootcamp market growing at 23.19% CAGR but Codecool's B2C revenue declining—indicates product-market misalignment rather than market contraction.</div>
+        <div class="question-expected">Expected: B2C curriculum roadmap with AI/data focus, pricing experiments, go-to-market refresh, and decision timeline on B2C strategic role (maintain/pivot/wind down).</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: cto-caio</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #30D158">low</span>
+        <div class="question-text">What is NOT in this report that the board should know? Are there material risks, operational challenges, or strategic decisions pending that were not surfaced in the January 2026 board materials?</div>
+        <div class="question-context">Standard 'unknown unknowns' check—board should explicitly ask management what was de-prioritized or omitted from the reporting package.</div>
+        <div class="question-expected">Expected: Open-ended management disclosure of off-agenda topics, emerging risks, team concerns, or strategic debates.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: chief-of-staff</div>
+      </div>
+
+      <div class="question-card">
+        <span class="question-priority" style="background: #30D158">low</span>
+        <div class="question-text">What technology and product metrics are being tracked but not reported to the board? (e.g., MAU, platform uptime, content library growth, engineering velocity, tech infrastructure costs)</div>
+        <div class="question-context">EdTech company board lacks technology visibility—product and engineering health metrics should be part of standard reporting.</div>
+        <div class="question-expected">Expected: Technology dashboard with platform health metrics, product roadmap milestones, engineering capacity, and tech debt status.</div>
+        <div class="finding-meta" style="margin-top: 6px">Source: cto-caio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT DEEP DIVE -->
+  
+  <div class="section">
+    <div class="section-header"><h2>Agent Analysis</h2></div>
+    <div class="section-body">
+      
+      <details class="agent-section">
+        <summary>
+          Big4 Consultant
+          <span class="agent-badge">claude-opus-4-6</span>
+          <span class="agent-badge">Confidence: 50%</span>
+          <span class="agent-badge">100.4s</span>
+        </summary>
+        <div class="agent-body">
+          <h4>key finding</h4><p>Codecool Hungary is successfully pivoting from a B2C coding bootcamp model to a B2B/B2G enterprise skilling business—B2B revenues grew by €1,235k YoY compensating for €979k B2C decline—but this creates dangerous concentration risk around 3 large accounts (Google, MBH, OTP/Shiwa) while the B2C pipeline that historically fed the outsourcing model is atrophying.</p>
+<h4>framework used</h4><p>SWOT + MECE</p>
+<h4>framework rationale</h4><p>Codecool is at a strategic inflection point: B2C revenues are declining while B2B is growing rapidly, Poland is in bankruptcy, and 2026 planning is underway. A SWOT analysis structured in MECE categories (Revenue Streams, Operations, Market Position, Financial Health) best captures the strategic tensions visible in this board report and enables clear implications for the 2026 business plan.</p>
+        </div>
+      </details>
+
+      <details class="agent-section">
+        <summary>
+          CFO
+          <span class="agent-badge">claude-opus-4-6</span>
+          <span class="agent-badge">Confidence: 50%</span>
+          <span class="agent-badge">66.5s</span>
+        </summary>
+        <div class="agent-body">
+          <ul class="findings-list concerns">
+<li class="concern-item">{&quot;flag&quot;:&quot;B2C revenue structural decline&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.3&quot;,&quot;evidence&quot;:&quot;B2C market-related revenues declined by €979k YoY (€906k Full Stack + €73k short courses). FS/B2C tuition revenues and FS outsourcing revenues both underperformed plan. This represents a fundamental erosion of the core consumer-facing business model.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Revenue concentration risk in B2B — timing and one-off items inflate December&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.3&quot;,&quot;evidence&quot;:&quot;December's €726k included €159k Google AI Q4 settlement + Q1 advance (pulled forward from January), €142k MBH final invoices (project completion), and €163k early collections. Stripping timing items, normalized December revenue would be approximately €262k, well below the €415k plan. Heavy reliance on 3 large B2B accounts (Google, MBH, OTP/Shiwa).&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Codecool Poland bankruptcy&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.5&quot;,&quot;evidence&quot;:&quot;Bankruptcy motion filed January 2025, temporary court supervisor appointed February 2025. Court recently requested update on asset balances. This represents a total loss of the Polish market entity and associated brand/operational risk.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Outsourcing market near-standstill&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.7&quot;,&quot;evidence&quot;:&quot;Market described as 'szinte leállt' (nearly stopped) compared to November-December, with no active client outreach. Students with GO status declining (37→30). Medior/senior positions open for extended periods with longer placement cycles.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Unplanned overhead costs of ~€100k in 2025&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.4&quot;,&quot;evidence&quot;:&quot;Additional EY audit fees, Deloitte SHA fees, Poland-related costs, executive severance, Encom payments, and SHA free cash flow portion — none originally budgeted. Indicates cost control issues and corporate complexity costs.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Pipeline dependency on unconfirmed deals&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.9-10&quot;,&quot;evidence&quot;:&quot;MBH Digital Leap Phase III (€695k+€295k) has oral MC approval but no written confirmation. MBH IT upskilling (€197k) has only oral CIO approval. Google 2026 extra budgets above contracted €578k still under negotiation. Multiple new discussions (MNB, KBC, Raiffeisen, MOL, IBM, Uniqa) are early-stage with no committed revenue.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Cash position potentially below 6 months OpEx&quot;,&quot;source&quot;:&quot;📄 Codecool_Board presentation_202601.pdf p.5&quot;,&quot;evidence&quot;:&quot;With €880k cash and estimated monthly operating expenses likely in the €120-180k range (based on the overhead and operational cost levels implied), runway is approximately 5-7 months. Without sustained B2B collection, this could tighten quickly.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+</ul>
+        </div>
+      </details>
+
+      <details class="agent-section">
+        <summary>
+          CTO / CAIO
+          <span class="agent-badge">claude-opus-4-6</span>
+          <span class="agent-badge">Confidence: 50%</span>
+          <span class="agent-badge">75.8s</span>
+        </summary>
+        <div class="agent-body">
+          <ul class="findings-list concerns">
+<li class="concern-item">{&quot;flag&quot;:&quot;No technology/product/engineering updates in board presentation — for an EdTech company, the complete absence of platform metrics, engineering velocity, or product roadmap in a board report suggests technology is not treated as a strategic priority.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;B2C Full Stack revenue declining 906k EUR YoY while B2B project revenue grows — suggests core consumer product-market fit may be deteriorating, possibly due to AI disruption of entry-level coding demand or competitive pressure from free/low-cost alternatives.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;No visible EU AI Act compliance preparation with August 2026 deadline — Codecool operates AI-related educational programs in the EU and likely deploys educational assessment systems that would qualify as high-risk under Annex III Category 3.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Polish entity bankruptcy and Romanian entity separated from main operations — post-merger (SDA, 2022) integration appears incomplete or failed in key markets, raising questions about operational and technical consolidation.&quot;,&quot;severity&quot;:&quot;HIGH&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Heavy revenue concentration in a few B2B accounts — Google AI, MBH (Digital Leap + IT upskilling), and OTP/Shiwa represent the majority of B2B pipeline. Several deals lack formal written confirmation (MBH Digital Leap extension: 'oral OK from MC', MBH IT upskilling: 'oral OK from CIO').&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;No R&amp;D or engineering spend disclosed — industry benchmark for EdTech companies is 15-25% of revenue on R&amp;D. Absence of this data suggests either very low investment or lack of tracking.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+<li class="concern-item">{&quot;flag&quot;:&quot;Outsourcing market described as 'almost stopped' (szinte leállt a piac) in January — market softness in junior developer placement may reflect structural shifts in demand due to AI coding assistants.&quot;,&quot;severity&quot;:&quot;MEDIUM&quot;}</li>
+</ul>
+        </div>
+      </details>
+
+      <details class="agent-section">
+        <summary>
+          Innovation Consultant
+          <span class="agent-badge">claude-opus-4-6</span>
+          <span class="agent-badge">Confidence: 50%</span>
+          <span class="agent-badge">74.1s</span>
+        </summary>
+        <div class="agent-body">
+          <ul class="findings-list concerns">
+<li class="concern-item">{&quot;risk&quot;:&quot;B2C/FS bootcamp model structural decline — consumer willingness to pay for full-stack developer training is eroding due to AI coding tools (Copilot, Cursor), free alternatives, and cyclical IT hiring slowdown&quot;,&quot;mitigation&quot;:&quot;Accelerate B2B pivot; reposition B2C offering toward AI-augmented development skills rather than traditional coding; reduce B2C cost base proportionally; explore income share agreements or employer-sponsored models to maintain volume&quot;,&quot;probability&quot;:&quot;high&quot;}</li>
+<li class="concern-item">{&quot;risk&quot;:&quot;B2B revenue concentration — top 3 accounts (Google, MBH, OTP/Shiwa) likely represent 70%+ of B2B revenue; MBH Digital Leap extension lacks written confirmation; Google AI budget expansion is under negotiation&quot;,&quot;mitigation&quot;:&quot;Actively diversify B2B pipeline (MNB, KBC, Raiffeisen, MOL, IBM, Uniqa discussions are promising); aim for no single client &gt;25% of B2B revenue; secure multi-year framework agreements; pursue Experis-scale wins (€100k+) to build mid-tier client base&quot;,&quot;probability&quot;:&quot;high&quot;}</li>
+<li class="concern-item">{&quot;risk&quot;:&quot;IT outsourcing market cyclical downturn — market described as 'nearly stopped' in Jan 2026, clients not reaching out, declining GO-status students (30 in Dec vs 37 in Nov)&quot;,&quot;mitigation&quot;:&quot;Pivot outsourcing toward medior/senior segment (CodePool) with higher margins and more resilient demand; launch demo day events and proactive client outreach; consider pivoting some outsourcing capacity toward B2B project delivery&quot;,&quot;probability&quot;:&quot;high&quot;}</li>
+<li class="concern-item">{&quot;risk&quot;:&quot;Poland entity bankruptcy and CEE geographic contraction — SDA merger promised 8-country scale but Poland is in bankruptcy, Romania is minimal (€20k), effectively concentrating operations in Hungary&quot;,&quot;mitigation&quot;:&quot;Manage Poland bankruptcy to minimize liabilities; test Polish B2B market via Digiskills z.o.o with minimal fixed cost (6-month BD assignment); focus scale on Hungary while selectively pursuing regional B2B deals (Experis, Mindtree) that leverage existing relationships&quot;,&quot;probability&quot;:&quot;medium&quot;}</li>
+<li class="concern-item">{&quot;risk&quot;:&quot;EU AI Act compliance burden — Codecool's AI-enabled learning platforms may be classified as high-risk educational AI by August 2026, requiring significant technical documentation, risk management, and human oversight investments&quot;,&quot;mitigation&quot;:&quot;Conduct AI system classification audit immediately; position compliance work as a competitive advantage and product differentiator; offer AI Act compliance training to enterprise clients as a new revenue stream (turning risk into opportunity)&quot;,&quot;probability&quot;:&quot;medium&quot;}</li>
+<li class="concern-item">{&quot;risk&quot;:&quot;Cash runway pressure — Hungary cash position at €880k with ~€100k unplanned overhead costs in 2025; Poland and Romania not contributing; dependency on timely B2B collections (Google advance, MBH settlements)&quot;,&quot;mitigation&quot;:&quot;Maintain strict cash collection discipline; negotiate advance payments/prepayments on B2B contracts (already demonstrated with Google); minimize discretionary spending; consider B2G grant funding as non-dilutive capital source; ensure 2026 business plan has adequate cash buffers&quot;,&quot;probability&quot;:&quot;medium&quot;}</li>
+</ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    Generated by Strategos &middot; February 27, 2026 &middot; Confidential
+  </div>
+
+</div>
+</body>
+</html>
