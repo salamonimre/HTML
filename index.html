@@ -1,372 +1,80 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>EDM Program Dashboard – MBH Bank</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategos Reports</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { background: #020617; overflow-x: hidden; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: #0f172a; }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-  @media (max-width: 600px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-    .three-col { grid-template-columns: 1fr !important; }
-    .two-col { grid-template-columns: 1fr !important; }
-    .budget-table th:nth-child(2), .budget-table td:nth-child(2) { display: none; }
-    .new-budget-table th:nth-child(2), .new-budget-table td:nth-child(2) { display: none; }
-    .new-budget-table th:nth-child(5), .new-budget-table td:nth-child(5) { display: none; }
-    .init-meta { grid-template-columns: 1fr 1fr !important; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    background: #0A0A0F;
+    color: #F5F5F7;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  @media (min-width: 601px) and (max-width: 900px) {
-    .kpi-grid { grid-template-columns: repeat(4, 1fr) !important; }
-    .three-col { grid-template-columns: 1fr 1fr !important; }
+  .container { max-width: 700px; margin: 0 auto; padding: 48px 24px; }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .subtitle { font-size: 14px; color: #6B6B76; margin-bottom: 32px; }
+  .report-list { list-style: none; }
+  .report-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #12121A;
+    border: 1px solid #2A2A3A;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s;
+  }
+  .report-item:hover { border-color: #3A3A4A; }
+  .company-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .report-info { flex: 1; min-width: 0; }
+  .report-name {
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .report-meta { font-size: 12px; color: #6B6B76; }
+  .score {
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
   }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState } = React;
-
-const ChevronDown = ({ open }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-    style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)", flexShrink: 0 }}>
-    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const StatusDot = ({ status }) => {
-  const c = { live:"#22c55e", uat:"#eab308", dev:"#3b82f6", planning:"#a78bfa", new:"#f97316", paused:"#6b7280" };
-  return <span style={{ width:10, height:10, borderRadius:"50%", backgroundColor:c[status]||"#6b7280", display:"inline-block", boxShadow:`0 0 6px ${c[status]||"#6b7280"}60`, flexShrink:0 }}/>;
-};
-
-const ProgressBar = ({ pct, color="#3b82f6" }) => (
-  <div style={{ width:"100%", height:6, backgroundColor:"#1e293b", borderRadius:3, overflow:"hidden" }}>
-    <div style={{ width:`${pct}%`, height:"100%", backgroundColor:color, borderRadius:3, transition:"width 0.6s cubic-bezier(0.4,0,0.2,1)" }}/>
-  </div>
-);
-
-const Section = ({ title, subtitle, children, icon, defaultOpen=false, accent="#3b82f6" }) => {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div style={{ backgroundColor:"#0f172a", border:`1px solid ${open ? accent+"40":"#1e293b"}`, borderRadius:12, overflow:"hidden", transition:"border-color 0.3s", marginBottom:12 }}>
-      <button onClick={() => setOpen(!open)} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"14px 16px", backgroundColor:"transparent", border:"none", cursor:"pointer", color:"#e2e8f0", textAlign:"left" }}>
-        <span style={{ fontSize:20 }}>{icon}</span>
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ fontSize:15, fontWeight:600, fontFamily:"'DM Sans',sans-serif" }}>{title}</div>
-          {subtitle && <div style={{ fontSize:11, color:"#94a3b8", marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>{subtitle}</div>}
+<div class="container">
+  <h1>Strategos Reports</h1>
+  <p class="subtitle">Published analysis reports</p>
+  <ul class="report-list">
+    
+    <li>
+      <a class="report-item" href="codecool/codecool_board-presentation_202601/index.html">
+        <span class="company-dot" style="background: #FF6B35"></span>
+        <div class="report-info">
+          <div class="report-name">Codecool — Codecool_Board presentation_202601.pdf</div>
+          <div class="report-meta">February 27, 2026</div>
         </div>
-        <ChevronDown open={open}/>
-      </button>
-      {open && <div style={{ padding:"0 16px 16px", animation:"fadeIn 0.3s ease" }}>{children}</div>}
-    </div>
-  );
-};
-
-const StreamCard = ({ name, status, statusLabel, progress, nextMilestone, nextDate, owner, complexity, details }) => {
-  const [open, setOpen] = useState(false);
-  const sc = { live:"#22c55e", uat:"#eab308", dev:"#3b82f6", planning:"#a78bfa", new:"#f97316", paused:"#6b7280" };
-  return (
-    <div style={{ backgroundColor:"#1e293b", borderRadius:10, padding:14, marginBottom:8, border:`1px solid ${open ? sc[status]+"30":"#334155"}`, transition:"border-color 0.3s" }}>
-      <div onClick={() => setOpen(!open)} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-        <StatusDot status={status}/>
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-            <span style={{ fontSize:13, fontWeight:600, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{name}</span>
-            <span style={{ fontSize:9, fontWeight:600, color:sc[status], backgroundColor:sc[status]+"15", padding:"2px 6px", borderRadius:4, textTransform:"uppercase", letterSpacing:"0.05em" }}>{statusLabel}</span>
-            {complexity && <span style={{ fontSize:9, color:"#64748b", fontFamily:"'DM Mono',monospace" }}>{complexity}</span>}
-          </div>
-        </div>
-        <div style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0 }}>
-          <span style={{ fontSize:11, color:"#94a3b8", fontWeight:500, fontFamily:"'DM Mono',monospace" }}>{progress}%</span>
-          <ChevronDown open={open}/>
-        </div>
-      </div>
-      <div style={{ marginTop:8 }}><ProgressBar pct={progress} color={sc[status]}/></div>
-      {open && (
-        <div style={{ marginTop:12, animation:"fadeIn 0.25s ease" }}>
-          <div className="two-col" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:8 }}>
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Következő mérföldkő</div>
-              <div style={{ fontSize:12, color:"#e2e8f0" }}>{nextMilestone}</div>
-              {nextDate && <div style={{ fontSize:10, color:"#94a3b8", marginTop:2, fontFamily:"'DM Mono',monospace" }}>{nextDate}</div>}
-            </div>
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Üzleti felelős</div>
-              <div style={{ fontSize:12, color:"#e2e8f0" }}>{owner}</div>
-            </div>
-          </div>
-          {details && details.length > 0 && (
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Részletek</div>
-              {details.map((d,i) => <div key={i} style={{ fontSize:12, color:"#cbd5e1", marginBottom:4, display:"flex", gap:6 }}><span style={{ color:"#475569", flexShrink:0 }}>▸</span><span>{d}</span></div>)}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const NewInitCard = ({ name, budget2026, totalBudget, timeline, benefits, scope }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ backgroundColor:"#1e293b", borderRadius:10, padding:14, marginBottom:8, border:`1px solid ${open ? "#f9731630":"#334155"}`, transition:"border-color 0.3s" }}>
-      <div onClick={() => setOpen(!open)} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-        <span style={{ fontSize:9, color:"#f97316", backgroundColor:"#f9731615", padding:"2px 6px", borderRadius:4, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.05em", flexShrink:0 }}>ÚJ</span>
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ fontSize:13, fontWeight:600, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{name}</div>
-        </div>
-        <div style={{ textAlign:"right", flexShrink:0 }}>
-          <div style={{ fontSize:12, fontWeight:600, color:"#f97316", fontFamily:"'DM Mono',monospace" }}>{budget2026}</div>
-          <div style={{ fontSize:9, color:"#64748b" }}>2026</div>
-        </div>
-        <ChevronDown open={open}/>
-      </div>
-      {open && (
-        <div style={{ marginTop:12, animation:"fadeIn 0.25s ease" }}>
-          <div className="init-meta" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8, marginBottom:8 }}>
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Teljes keret</div>
-              <div style={{ fontSize:12, color:"#e2e8f0", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{totalBudget}</div>
-            </div>
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Átfutás</div>
-              <div style={{ fontSize:12, color:"#e2e8f0", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{timeline}</div>
-            </div>
-            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>2026 budget</div>
-              <div style={{ fontSize:12, color:"#f97316", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{budget2026}</div>
-            </div>
-          </div>
-          <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10, marginBottom:8 }}>
-            <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Scope</div>
-            <div style={{ fontSize:12, color:"#cbd5e1", lineHeight:1.5 }}>{scope}</div>
-          </div>
-          <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
-            <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Üzleti értékteremtés</div>
-            {benefits.map((b,i) => <div key={i} style={{ fontSize:12, color:"#a7f3d0", marginBottom:3, display:"flex", gap:6 }}><span style={{ color:"#22c55e", flexShrink:0 }}>✓</span><span>{b}</span></div>)}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const KPICard = ({ value, label, sub, color="#3b82f6" }) => (
-  <div style={{ backgroundColor:"#0f172a", borderRadius:10, padding:14, textAlign:"center", border:"1px solid #1e293b" }}>
-    <div style={{ fontSize:24, fontWeight:700, color, fontFamily:"'DM Mono',monospace", lineHeight:1 }}>{value}</div>
-    <div style={{ fontSize:11, color:"#e2e8f0", marginTop:5, fontWeight:500, fontFamily:"'DM Sans',sans-serif" }}>{label}</div>
-    {sub && <div style={{ fontSize:9, color:"#64748b", marginTop:2 }}>{sub}</div>}
-  </div>
-);
-
-function EDMDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const tabs = [
-    { id:"overview", label:"Áttekintés", icon:"◉" },
-    { id:"streams", label:"Stream-ek", icon:"◈" },
-    { id:"new2026", label:"Új elemek", icon:"◆" },
-    { id:"budget", label:"Budget", icon:"◇" },
-  ];
-
-  return (
-    <div style={{ minHeight:"100vh", backgroundColor:"#020617", color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>
-      <div style={{ background:"linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)", borderBottom:"1px solid #1e293b", padding:"20px 16px 12px", position:"sticky", top:0, zIndex:10 }}>
-        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:12 }}>
-          <div>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-              <div style={{ width:7, height:7, borderRadius:"50%", backgroundColor:"#22c55e", animation:"pulse 2s ease-in-out infinite", boxShadow:"0 0 8px #22c55e60" }}/>
-              <span style={{ fontSize:9, color:"#22c55e", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.1em", fontFamily:"'DM Mono',monospace" }}>Aktív program</span>
-            </div>
-            <h1 style={{ fontSize:20, fontWeight:700, color:"#f8fafc", letterSpacing:"-0.02em" }}>External Delivery Model</h1>
-            <p style={{ fontSize:11, color:"#64748b", marginTop:3 }}>MBH Bank · Management Committee</p>
-          </div>
-          <div style={{ textAlign:"right", flexShrink:0 }}>
-            <div style={{ fontSize:9, color:"#64748b", fontFamily:"'DM Mono',monospace" }}>2026.02.10</div>
-          </div>
-        </div>
-        <div style={{ display:"flex", gap:3, overflowX:"auto", WebkitOverflowScrolling:"touch", msOverflowStyle:"none", scrollbarWidth:"none" }}>
-          {tabs.map(t => (
-            <button key={t.id} onClick={() => setActiveTab(t.id)} style={{ padding:"7px 14px", borderRadius:8, border:"none", backgroundColor:activeTab===t.id?"#3b82f6":"transparent", color:activeTab===t.id?"#fff":"#94a3b8", fontSize:12, fontWeight:500, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap", transition:"all 0.2s" }}>
-              <span style={{ marginRight:4 }}>{t.icon}</span>{t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ padding:"12px 16px 60px", maxWidth:900, margin:"0 auto" }}>
-        {activeTab==="overview" && (
-          <div style={{ animation:"fadeIn 0.3s ease" }}>
-            <div className="kpi-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginBottom:14 }}>
-              <KPICard value="13" label="Aktív stream" sub="+ 9 javasolt új" color="#3b82f6"/>
-              <KPICard value="~380" label="Résztvevő" sub="szakértők" color="#a78bfa"/>
-              <KPICard value="5" label="Élesítés" sub="2025-ben" color="#22c55e"/>
-              <KPICard value="30+" label="Demo/POC" sub="leszállítva" color="#eab308"/>
-            </div>
-            <Section title="Mi az EDM Program?" subtitle="A modell háttere, célja és működési keretei" icon="🏗️" defaultOpen={true} accent="#3b82f6">
-              <div style={{ fontSize:13, color:"#cbd5e1", lineHeight:1.7, marginBottom:12 }}>Az External Delivery Model (EDM) lehetőséget teremtett a kiemelt üzletfejlesztési és innovációs feladatok integrációs időszakban történő párhuzamos megkezdésére. Külsős erőforrásokkal, de a banki kontrollpontok betartásával történik az üzletfejlesztési és innovációs stream-ek kiválasztása, előkészítése és leszállítása.</div>
-              <div className="three-col" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-                {[{c:"#3b82f6",t:"Háttér",d:"Migrációs és prudenciális feladatok lekötötték az erőforrásokat, de üzletfejlesztési feladatok elvégzése fontos volt a stratégiai célokkal összhangban."},{c:"#22c55e",t:"Működés",d:"Egységes technológiai koordináció és IT szakértői támogatás. Önálló board-ok, döntési fórumok, MC közvetlen felügyelete alatt."},{c:"#eab308",t:"\"Keltető\" modell",d:"Kezdeményezések inkubálása megfelelő érettségi szintre, majd PPI integráció. Az eddigi tapasztalatok pozitívak."}].map((x,i)=>(<div key={i} style={{backgroundColor:"#1e293b",borderRadius:8,padding:12}}><div style={{fontSize:10,color:x.c,fontWeight:600,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.05em"}}>{x.t}</div><div style={{fontSize:12,color:"#94a3b8",lineHeight:1.5}}>{x.d}</div></div>))}
-              </div>
-            </Section>
-            <Section title="2025 Főbb eredmények" subtitle="Teljesített feladatok és mérföldkövek" icon="🏆" accent="#22c55e">
-              <div className="two-col" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:10 }}>
-                <div style={{backgroundColor:"#1e293b",borderRadius:8,padding:12}}>
-                  <div style={{fontSize:10,color:"#22c55e",fontWeight:600,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Élesítések</div>
-                  {["Bef.szolg. online számlanyitás (25Q3)","Fraud2 ThreatMark (25Q3)","DBOS Drop1 tech. élesítés (26Q1)","Mobil Redesign (26Q1)","WMP Advisory (26Q1)"].map((x,i)=>(<div key={i} style={{fontSize:11,color:"#a7f3d0",marginBottom:3,display:"flex",gap:5}}><span>✓</span><span>{x}</span></div>))}
-                </div>
-                <div style={{backgroundColor:"#1e293b",borderRadius:8,padding:12}}>
-                  <div style={{fontSize:10,color:"#eab308",fontWeight:600,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>UAT tesztelés</div>
-                  {["FinPorta 1. fázis","Új dig. köztes réteg + Netbank Drop1","Mobil Redesign","Bef.szolg. Advisory & BranchNXT"].map((x,i)=>(<div key={i} style={{fontSize:11,color:"#fef08a",marginBottom:3,display:"flex",gap:5}}><span>◎</span><span>{x}</span></div>))}
-                </div>
-              </div>
-            </Section>
-            <Section title="Kontrollmechanizmusok" subtitle="Banki felügyelet és prudenciális keretek" icon="🛡️" accent="#64748b">
-              <div className="two-col" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                {[{t:"Beszerzés",d:"MBH szintű beszerzési folyamatokhoz illeszkedik"},{t:"Erőforrás allokáció",d:"QBR folyamatok szerint, minimális banki igénybevétel"},{t:"Büdzsé",d:"MC allokálja és hagyja jóvá, CSBABI kötelezettségvállalás"},{t:"Szállítás kontroll",d:"Terjedelem jóváhagyás, architekturális elvek, rendszeres DEMO, UAT, átvétel"}].map((x,i)=>(<div key={i} style={{backgroundColor:"#1e293b",borderRadius:8,padding:12}}><div style={{fontSize:10,fontWeight:600,color:"#e2e8f0",marginBottom:3}}>{x.t}</div><div style={{fontSize:11,color:"#94a3b8",lineHeight:1.4}}>{x.d}</div></div>))}
-              </div>
-            </Section>
-            <Section title="Határozati javaslat" subtitle="MC döntési javaslatok" icon="📋" accent="#f97316">
-              <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                {[{n:"1",t:"Az MC tudomásul veszi az EDM Program státusz beszámolóját és 2026-os költségtervét, jóváhagyja folytatólagos működését."},{n:"2",t:"Új témák EDM terjedelembe emelése: 636,5M Ft tervezési + 3 105,5M Ft implementációs keret 2026-ra."},{n:"3",t:"IT szakértői támogatás meghosszabbítása Mindspire Consulting Zrt.-vel 2026.04.30-ig, 116,7M Ft."},{n:"4",t:"E-csatorna stream-ek PPI integrációja 2026.05.15-i határidővel."}].map(x=>(<div key={x.n} style={{backgroundColor:"#1e293b",borderRadius:8,padding:12,display:"flex",gap:10,alignItems:"flex-start"}}><div style={{width:22,height:22,borderRadius:6,backgroundColor:"#f9731620",color:"#f97316",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,flexShrink:0,fontFamily:"'DM Mono',monospace"}}>{x.n}</div><div style={{fontSize:12,color:"#cbd5e1",lineHeight:1.5}}>{x.t}</div></div>))}
-              </div>
-            </Section>
-          </div>
-        )}
-
-        {activeTab==="streams" && (
-          <div style={{animation:"fadeIn 0.3s ease"}}>
-            <div style={{display:"flex",gap:12,marginBottom:14,flexWrap:"wrap"}}>
-              {[{s:"live",l:"Éles"},{s:"uat",l:"UAT"},{s:"dev",l:"Fejlesztés"},{s:"planning",l:"Tervezés"},{s:"paused",l:"Várakozó"}].map(x=>(<div key={x.s} style={{display:"flex",alignItems:"center",gap:5,fontSize:10,color:"#94a3b8"}}><StatusDot status={x.s}/> {x.l}</div>))}
-            </div>
-            <Section title="E-csatorna stream-ek" subtitle="Digitális csatornák – PPI integráció 2026.05.15." icon="📱" defaultOpen={true} accent="#3b82f6">
-              <StreamCard name="Új digitalizációs köztes réteg" status="uat" statusLabel="UAT" progress={65} nextMilestone="Drop1 UAT lezárása" nextDate="2026.03.04." owner="Soós Csaba" complexity="XXL" details={["AWS felhőalapú fejlesztői környezet kialakítva","Drop1 DEV Quality Gate lezárult","Drop2 fejlesztések elkezdődtek","UAT, PRE-PROD előkészítés alatt"]}/>
-              <StreamCard name="Újgenerációs Netbank" status="uat" statusLabel="UAT" progress={60} nextMilestone="Drop1 UAT lezárása" nextDate="2026.03.04." owner="Soós Csaba" complexity="XXL" details={["Drop1-2 tervezés lezárult","Drop1 UAT folyamatban","Dolgozói pilot 2026 Q2 végén","ODPS-alapú egyenleg biztosítása"]}/>
-              <StreamCard name="Újgenerációs Mobilbank + Redesign" status="uat" statusLabel="UAT" progress={75} nextMilestone="Redesign rollout" nextDate="2026. április" owner="Soós Csaba" complexity="XXL" details={["Forráskód átvétele, banki infra kialakítva","Közös fejlesztői team, módszertan kész","Modern design kész, kétheti demo","Utalás megújulása implementálva"]}/>
-            </Section>
-            <Section title="Befektetési stream-ek" subtitle="Befektetési szolgáltatások és ODPS" icon="📊" accent="#a78bfa">
-              <StreamCard name="Befektetési szolgáltatások" status="uat" statusLabel="UAT / Éles" progress={70} nextMilestone="WMP Advisory élesítés" nextDate="2026.02.20." owner="Nyitrai Győző" complexity="XXL" details={["Online számlanyitás éles (25Q3)","WMP Advisory UAT, élesítés februárban","BranchNXT 1. fázis UAT","Kripto RFP folyamatban"]}/>
-              <StreamCard name="ODPS implementáció" status="dev" statusLabel="Fejlesztés/UAT" progress={50} nextMilestone="Netbank funkciók UAT-ra" nextDate="2026.02.15." owner="N/A" complexity="L" details={["Számla, egyenleg betöltés UAT","Tranzakciók fejlesztés alatt","7×24 monitoring 2026 Q1-ben kész"]}/>
-            </Section>
-            <Section title="Vállalati stream-ek" subtitle="Corp. Banking, Pricing, Loan Orig., Dok. mgmt." icon="🏢" accent="#eab308">
-              <StreamCard name="Corporate Banking Interface" status="planning" statusLabel="Tervezés" progress={35} nextMilestone="Tervezési fázis lezárása" nextDate="2026.02.26." owner="Kollega-Tarsoly D." complexity="L" details={["Funkcionális demo megtörtént","Nagyvállalati interjúk folyamatban","Kommunikációs protokoll POC bemutatva"]}/>
-              <StreamCard name="Pricing Engine" status="planning" statusLabel="Specifikáció" progress={30} nextMilestone="MPV0 megoldástervezés" nextDate="2026.02.15." owner="Kollega-Tarsoly D. / Tenke G." complexity="XL" details={["Szállító kiválasztva","3 MVP csomag specifikálása megkezdődött","Implementációs POC kezdődik"]}/>
-              <StreamCard name="Vállalati Loan Origination" status="paused" statusLabel="Döntésre vár" progress={20} nextMilestone="Impl. folytatási döntés" nextDate="TBD" owner="Kollega-Tarsoly D." complexity="XL" details={["RFP értékelés megtörtént","2026-os scope és budget iteráció zajlik"]}/>
-              <StreamCard name="Dokumentum menedzsment" status="planning" statusLabel="Specifikáció" progress={25} nextMilestone="Szakmai scope lezárása" nextDate="2026 Q1" owner="Kollega-Tarsoly D." complexity="XL" details={["RFI és RFP lebonyolítva","BRS elkészült","Kereskedelmi értékelés folyamatban"]}/>
-            </Section>
-            <Section title="Lakossági és egyéb" subtitle="MKV, FinPorta, Fraud" icon="👥" accent="#22c55e">
-              <StreamCard name="MKV számlanyitás" status="planning" statusLabel="Tervezés" progress={35} nextMilestone="SDD fázis zárása" nextDate="2026.03.16." owner="Kiss Z. / Tenke G." complexity="M" details={["BRS és SAD véleményezés alatt","Megoldás tervezés folyamatban"]}/>
-              <StreamCard name="FinPorta kapcsolat" status="uat" statusLabel="UAT" progress={80} nextMilestone="UAT kezdés" nextDate="2026.02.10." owner="Ginzer I. / Árva A. / Kiss K." complexity="L" details={["Fejlesztések többsége leszállítva","Élesítés májusban, rollout júliusig"]}/>
-              <StreamCard name="Finporta 2. fázis" status="planning" statusLabel="Előkészítés" progress={15} nextMilestone="Tervezés lezárása" nextDate="2026 Q2" owner="Ginzer I. / Árva A. / Kiss K." complexity="M" details={["Ütemezés folyamatban","2026-os megvalósíthatóság vizsgálata"]}/>
-              <StreamCard name="Fraud 2 – ThreatMark" status="live" statusLabel="Részben éles" progress={55} nextMilestone="PRM add-in élesítés" nextDate="2026.02.15." owner="Kiss Norbert" complexity="XXL" details={["ThreatMark éles Netbank + iOS (követő mód)","Android 2026Q2-ben tervezett","PRM integráció tervezés alatt"]}/>
-            </Section>
-          </div>
-        )}
-
-        {activeTab==="new2026" && (
-          <div style={{animation:"fadeIn 0.3s ease"}}>
-            <div style={{backgroundColor:"#0f172a",border:"1px solid #f9731630",borderRadius:10,padding:14,marginBottom:14}}>
-              <div className="three-col" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,textAlign:"center"}}>
-                <div><div style={{fontSize:20,fontWeight:700,color:"#f97316",fontFamily:"'DM Mono',monospace"}}>9</div><div style={{fontSize:10,color:"#94a3b8"}}>Javasolt új téma</div></div>
-                <div><div style={{fontSize:20,fontWeight:700,color:"#f97316",fontFamily:"'DM Mono',monospace"}}>636,5M</div><div style={{fontSize:10,color:"#94a3b8"}}>Tervezési budget</div></div>
-                <div><div style={{fontSize:20,fontWeight:700,color:"#f97316",fontFamily:"'DM Mono',monospace"}}>3 105,5M</div><div style={{fontSize:10,color:"#94a3b8"}}>Impl. budget</div></div>
-              </div>
-            </div>
-            <NewInitCard name="Clavis NXT bevezetés" budget2026="940M Ft" totalBudget="1 740M Ft" timeline="39 hónap" scope="A C4 és iC4 elavult monolit rendszerek kiváltása. Új befektetési háttérplatform, integrációk, GAP fejlesztések, adat- és folyamatmigráció." benefits={["Modern, skálázható, service architektúra","Fejlett üzleti funkciók: komplex díjstruktúrák, Day trade","SWIFT automatizáció"]}/>
-            <NewInitCard name="Archiválás koncepció" budget2026="365M Ft" totalBudget="815M Ft" timeline="12 hónap" scope="Archiválási koncepció: lekapcsolási kritériumrendszer, folyamat, szabályozás, adatmegőrzés technológiai megvalósítása." benefits={["Csökkentett üzemeltetési költség","Gyorsabb ügyfélkiszolgálás","Ütemezett rendszer kivezetések"]}/>
-            <NewInitCard name="Omnichannel üzenetközpont" budget2026="435M Ft" totalBudget="480M Ft" timeline="21 hónap" scope="Jövőálló, egységes üzenetküldő rendszer. Biztonsági szint emelés, admin felület, omnichannel működés." benefits={["IT biztonsági sérülékenység felszámolása","Üzenetkezelő funkció bővítése","Marketing elvárásoknak megfelelő"]}/>
-            <NewInitCard name="Zeus – iC4 migráció" budget2026="520M Ft" totalBudget="800M Ft" timeline="11 hónap" scope="Adatmigrációs logikák felülvizsgálata, társrendszeri fejlesztések, állomány-átruházás. PPI kezelésbe átadható." benefits={["Egységes ügyfélkiszolgálás","Stratégiai cél megvalósulása","Architektúra egyszerűsítése"]}/>
-            <NewInitCard name="Daily banking loyalty" budget2026="345M Ft" totalBudget="625M Ft" timeline="15 hónap" scope="Ügyfeleket aktívabb számla- és e-csatorna használatra ösztönző megoldás. MVP: két loyalty elem." benefits={["Ügyfél aktivitás növelés","Fióki terhelés csökkentése","Bevétel javítás"]}/>
-            <NewInitCard name="CRM" budget2026="365M Ft" totalBudget="665M Ft" timeline="11 hónap" scope="Egységes, több szegmenst kiszolgáló CRM környezet kialakítása, modern technikai környezetben." benefits={["Értékesítés támogatása","Adatvezérelt automatizálás","Omnichannel kampánykezelés"]}/>
-            <NewInitCard name="IT GRC eszköztár" budget2026="440M Ft" totalBudget="560M Ft" timeline="14 hónap" scope="IT audit és kockázatkezelés eszköztár. SharePoint/Excel fragmentált megoldások kiváltása." benefits={["Gyorsabb auditok","Valós idejű dashboard-ok","Leányvállalati kiterjesztés"]}/>
-            <NewInitCard name="Licence management" budget2026="155M Ft" totalBudget="200M Ft" timeline="14 hónap" scope="Egységes licence kezelési folyamat, informatikai támogatás. Assessment, TOM, eszközkiválasztás." benefits={["Audit kockázat csökkentése","Költségoptimalizálás","Naprakész nyilvántartás"]}/>
-            <NewInitCard name="Finporta 2. fázis" budget2026="177M Ft" totalBudget="223M Ft" timeline="14 hónap" scope="Digitális kölcsönigénylő, jelzáloghitel optimalizálás, előminősítés, 3rd party API kiajánlás." benefits={["Hiteligénylés optimalizálás","Fiókhálózat tehermentesítése","3rd party frontend támogatás"]}/>
-          </div>
-        )}
-
-        {activeTab==="budget" && (
-          <div style={{animation:"fadeIn 0.3s ease"}}>
-            <div className="three-col" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
-              <KPICard value="15,6 Mrd" label="MC keret (csökk.)" sub="2025-ös terjedelem" color="#64748b"/>
-              <KPICard value="4,6 Mrd" label="Költés 24+25" sub="tény, CAPEX+OPEX" color="#3b82f6"/>
-              <KPICard value="10,2 Mrd" label="Prognózis 2026" sub="lekötött + becsült" color="#eab308"/>
-            </div>
-            <Section title="Meglévő stream-ek büdzséje" subtitle="2024-2026 keret és felhasználás" icon="💰" defaultOpen={true} accent="#3b82f6">
-              <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
-                <table className="budget-table" style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 3px",fontSize:11,minWidth:420}}>
-                  <thead><tr>
-                    <th style={{textAlign:"left",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Stream</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Keret</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Költés</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>2026</th>
-                    <th style={{textAlign:"center",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase",width:70}}>%</th>
-                  </tr></thead>
-                  <tbody>
-                    {[{n:"Dig. köztes réteg",k:"4 247M",c:"797M",p:"3 164M",pct:93},{n:"Újgen. Netbank",k:"1 573M",c:"442M",p:"1 280M",pct:110},{n:"Újgen. Mobil",k:"1 486M",c:"215M",p:"1 054M",pct:85},{n:"Befektetési szolg.",k:"2 227M",c:"1 501M",p:"788M",pct:103},{n:"MKV számlanyitás",k:"298M",c:"214M",p:"85M",pct:100},{n:"Corp. Banking",k:"790M",c:"281M",p:"481M",pct:96},{n:"Dok. menedzsment",k:"808M",c:"39M",p:"745M",pct:97},{n:"Pricing Engine",k:"1 714M",c:"106M",p:"997M",pct:64},{n:"Loan Origination",k:"900M",c:"64M",p:"836M",pct:100},{n:"Program koord.",k:"1 600M",c:"905M",p:"696M",pct:100}].map((r,i)=>(
-                      <tr key={i} style={{backgroundColor:"#1e293b"}}>
-                        <td style={{padding:"7px 8px",borderRadius:"6px 0 0 6px",color:"#e2e8f0",fontWeight:500}}>{r.n}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#94a3b8",fontFamily:"'DM Mono',monospace"}}>{r.k}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#94a3b8",fontFamily:"'DM Mono',monospace"}}>{r.c}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#eab308",fontFamily:"'DM Mono',monospace"}}>{r.p}</td>
-                        <td style={{padding:"7px 8px",borderRadius:"0 6px 6px 0"}}><ProgressBar pct={Math.min(r.pct,100)} color={r.pct>100?"#ef4444":r.pct>90?"#eab308":"#22c55e"}/></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div style={{marginTop:8,display:"flex",gap:12,justifyContent:"flex-end",flexWrap:"wrap"}}>
-                {[{c:"#22c55e",l:"Keret alatt"},{c:"#eab308",l:"Közelében"},{c:"#ef4444",l:"Keret felett"}].map((x,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:9,color:"#94a3b8"}}><div style={{width:10,height:3,borderRadius:2,backgroundColor:x.c}}/> {x.l}</div>))}
-              </div>
-            </Section>
-            <Section title="Új témák budget (2026)" subtitle="Tervezési és implementációs keretek" icon="🆕" accent="#f97316">
-              <div style={{overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
-                <table className="new-budget-table" style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 3px",fontSize:11,minWidth:420}}>
-                  <thead><tr>
-                    <th style={{textAlign:"left",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Téma</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Terv.</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Impl.</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Teljes</th>
-                    <th style={{textAlign:"right",padding:"6px 8px",color:"#64748b",fontWeight:500,fontSize:9,textTransform:"uppercase"}}>Idő</th>
-                  </tr></thead>
-                  <tbody>
-                    {[{n:"Clavis NXT",t:"170M",im:"770M",to:"1 740M",ti:"39 hó"},{n:"Archiválás",t:"55M",im:"310M",to:"815M",ti:"12 hó"},{n:"Omnichannel",t:"40M",im:"395M",to:"480M",ti:"21 hó"},{n:"Zeus–iC4",t:"50M",im:"470M",to:"800M",ti:"11 hó"},{n:"Loyalty",t:"65M",im:"280M",to:"625M",ti:"15 hó"},{n:"CRM",t:"95M",im:"270M",to:"665M",ti:"11 hó"},{n:"IT GRC",t:"70M",im:"370M",to:"560M",ti:"14 hó"},{n:"Licence mgmt.",t:"25M",im:"130M",to:"200M",ti:"14 hó"},{n:"Finporta 2",t:"66,5M",im:"110,5M",to:"223M",ti:"14 hó"}].map((r,i)=>(
-                      <tr key={i} style={{backgroundColor:"#1e293b"}}>
-                        <td style={{padding:"7px 8px",borderRadius:"6px 0 0 6px",color:"#e2e8f0",fontWeight:500}}>{r.n}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#94a3b8",fontFamily:"'DM Mono',monospace"}}>{r.t}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#f97316",fontFamily:"'DM Mono',monospace"}}>{r.im}</td>
-                        <td style={{padding:"7px 8px",textAlign:"right",color:"#e2e8f0",fontWeight:600,fontFamily:"'DM Mono',monospace"}}>{r.to}</td>
-                        <td style={{padding:"7px 8px",borderRadius:"0 6px 6px 0",textAlign:"right",color:"#94a3b8",fontFamily:"'DM Mono',monospace"}}>{r.ti}</td>
-                      </tr>
-                    ))}
-                    <tr style={{backgroundColor:"#0f172a"}}><td style={{padding:"8px 8px",borderRadius:"6px 0 0 6px",color:"#f97316",fontWeight:700,borderTop:"2px solid #f97316"}}>ÖSSZESEN</td><td style={{padding:"8px 8px",textAlign:"right",color:"#f97316",fontWeight:700,fontFamily:"'DM Mono',monospace",borderTop:"2px solid #f97316"}}>636,5M</td><td style={{padding:"8px 8px",textAlign:"right",color:"#f97316",fontWeight:700,fontFamily:"'DM Mono',monospace",borderTop:"2px solid #f97316"}}>3 105,5M</td><td style={{padding:"8px 8px",textAlign:"right",color:"#f97316",fontWeight:700,fontFamily:"'DM Mono',monospace",borderTop:"2px solid #f97316"}}>6 108M</td><td style={{padding:"8px 8px",borderRadius:"0 6px 6px 0",borderTop:"2px solid #f97316"}}></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </Section>
-            <Section title="Szabad keret" subtitle="≈ 748M Ft (meglévő stream-ek)" icon="📐" accent="#22c55e">
-              <div style={{fontSize:12,color:"#cbd5e1",lineHeight:1.6}}>A költések arányban vannak a szállítás ütemével. A Pricing Engine és Mobil stream-eknél maradt a legnagyobb szabad keret, míg az Újgen. Netbank és Bef. szolg. stream-eknél kismértékű túllépés a scope bővülések miatt.</div>
-            </Section>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.render(React.createElement(EDMDashboard), document.getElementById("root"));
-</script>
+        <span class="score" style="color: #FF9F0A">5</span>
+      </a>
+    </li>
+  </ul>
+</div>
 </body>
 </html>
