@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>External Delivery Model (EDM) Program – Strategos Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: #020617; overflow-x: hidden; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+  @media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .three-col { grid-template-columns: 1fr !important; }
+    .two-col { grid-template-columns: 1fr !important; }
+    .init-meta { grid-template-columns: 1fr 1fr !important; }
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(4, 1fr) !important; }
+    .three-col { grid-template-columns: 1fr 1fr !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const DATA = {"kpis":[{"sub":"piaci körkép elemzések","color":"#3b82f6","label":"Szállítói RFI","value":"3"},{"sub":"megoldás kiválasztás","color":"#22c55e","label":"Szállítói tenderek","value":"30+"},{"sub":"külsős és banki szakértők","color":"#a78bfa","label":"EDM résztvevők","value":"~380 fő"},{"sub":"aktív együttműködések","color":"#f97316","label":"Szállítói partner","value":"9"},{"sub":"különböző státuszokban","color":"#eab308","label":"Futó projekt","value":"11"},{"sub":"2026 tervezés alatt","color":"#64748b","label":"Új kezdeményezés","value":"9"},{"sub":"2024-2026 MC keret","color":"#3b82f6","label":"Program keret","value":"15 641m Ft"},{"sub":"tervezett költés","color":"#22c55e","label":"2026 prognózis","value":"10 245m Ft"}],"tabs":[{"id":"overview","icon":"◉","label":"Áttekintés","sections":[{"icon":"📊","type":"text","cards":[{"color":"#3b82f6","title":"Program keret 2024-2026","content":"15 641,4m Ft MC keret (2025 scope szerint)"},{"color":"#22c55e","title":"Már elköltött összeg","content":"4 648,6m Ft (2024-2025)"},{"color":"#eab308","title":"2026 prognózis","content":"10 245m Ft tervezett költés"},{"color":"#a78bfa","title":"Új témák 2026","content":"636,5m Ft + ÁFA tervezés + 3 105,5m Ft + ÁFA implementáció"}],"title":"EDM Program összefoglaló","accent":"#3b82f6","content":"Az External Delivery Model (EDM) Program az MBH Bank Nyrt. stratégiai IT fejlesztési programja, amely külső szakértői kapacitások bevonásával valósítja meg a bank digitális transzformációját. A program 2024-2026 között összesen 15 641,4m Ft Management Committee keretet kapott, amelyből 2024-2025-ben 4 648,6m Ft került felhasználásra, 2026-ra pedig 10 245m Ft prognózis került megállapításra.","subtitle":"A modell eddigi eredményei és 2026-os feladatok"},{"icon":"📈","type":"kpi-grid","items":[{"sub":"piaci körkép elemzések","color":"#3b82f6","label":"Lebonyolított szállítói RFI","value":"3"},{"sub":"megoldás kiválasztás","color":"#22c55e","label":"Lebonyolított szállítói tenderek","value":"30+"},{"sub":"külsős és banki szakértők","color":"#a78bfa","label":"EDM résztvevők és szakértők","value":"~380 fő"},{"sub":"aktív partnerek","color":"#f97316","label":"Szállítói együttműködés","value":"9"},{"sub":"különböző státuszokban","color":"#eab308","label":"Aktív projektstream","value":"11"},{"sub":"2026-os tervezési fázisban","color":"#64748b","label":"Új kezdeményezés","value":"9"}],"title":"Program teljesítmény mutatók","accent":"#22c55e","subtitle":"Eddigi eredmények és aktivitás"},{"icon":"💰","rows":[{"amount":"15 641,4m Ft","detail":"MC keret (2025 scope)","category":"EDM Program 2024-2026 összesen"},{"amount":"4 648,6m Ft","detail":"Teljesített","category":"2024-2025 költés"},{"amount":"10 245m Ft","detail":"Tervezett","category":"2026 prognózis"},{"amount":"636,5m Ft + ÁFA","detail":"9 új kezdeményezés előkészítése","category":"Új témák tervezési budget 2026"},{"amount":"3 105,5m Ft + ÁFA","detail":"Új scope elemek megvalósítása","category":"Új témák implementációs budget 2026"},{"amount":"116,7m Ft + ÁFA","detail":"Mindspire Consulting Zrt. 2026.04.30-ig","category":"IT szakértői támogatás meghosszabbítás"}],"type":"data-table","title":"Pénzügyi áttekintés","accent":"#22c55e","columns":[{"key":"category","align":"left","label":"Kategória"},{"key":"amount","align":"right","label":"Összeg"},{"key":"detail","align":"left","label":"Részletek"}],"subtitle":"EDM Program költségvetési összefoglaló","highlightLastRow":false},{"icon":"✓","type":"decision-list","items":[{"text":"A Management Committee tudomásul veszi az EDM Program státusz beszámolóját, valamint 2026-os költségtervét, és jóváhagyja annak folytatólagos működését az egységes IT szakértői támogatással és technológiai koordinációval.","number":1},{"text":"A Management Committee jóváhagyja a 20.-29. diákon bemutatott új témák EDM terjedelembe emelését és tudomásul veszi a témák kapcsolódó várható budget vonzatát 2026-ra vonatkozóan: 636,5m Ft+ÁFA összegű tervezési és 3105,5m Ft+ÁFA összegű implementációs keretet 2026-ra vonatkozóan.","number":2},{"text":"A Management Committee az 1. ponttal összhangban tudomásul veszi a CSBABI felé benyújtandó IT szakértői támogatás és technológiai koordináció megbízás meghosszabbítását a Mindspire Consulting Zrt.-vel 2026 április 30-ig (a 2025. december 17-i CSBABI ülésen definiált „stratégiai megállapodás kötése\" feladat megtörténtéig) 116,7m Ft+ÁFA összegben.","number":3},{"text":"A Management Committee jóváhagyja az E-csatorna stream-ek PPI integrációját 2026. május 15-i határidővel és megbízza az EDM Operatív felelőst és a PPI terület vezetőjét az ezzel kapcsolatos feladatok tervezésére és végrehajtására.","number":4}],"title":"Management Committee döntések","accent":"#22c55e","subtitle":"Jóváhagyásra váró és elfogadott határozatok"}]},{"id":"projects","icon":"🚀","label":"Futó projektek","sections":[{"icon":"⚡","type":"progress-cards","items":[{"name":"Befektetési szolgáltatások új fejlesztései","owner":"Nyitrai Győző / Czéh Richárd","status":"uat","details":["Budget: 2227,4m Ft","Online számlanyitás élesítve 2025.10.03","BranchNXT UAT folyamatban","Kripto RFP zajlik"],"nextDate":"2026.02.20","progress":85,"complexity":"XL","statusLabel":"WMP Advisory UAT, élesítés 2026.02","nextMilestone":"WMP Advisory élesítés"},{"name":"Új digitalizációs köztes réteg és Újgenerációs Netbank","owner":"Soós Csaba / Sudár Gábor","status":"uat","details":["Budget: 4247m Ft + 1572,5m Ft","AWS infrastruktúra DEV kész, UAT alatt","Drop2 fejlesztés folyamatban","Dolgozói pilot 2026.Q2 végén"],"nextDate":"2026.03.04","progress":70,"complexity":"XL","statusLabel":"Drop1 UAT 2026.03.04 zárás","nextMilestone":"Drop1 UAT lezárása"},{"name":"Újgenerációs Mobilbank és Redesign","owner":"Soós Csaba / Sudár Gábor","status":"uat","details":["Budget: 1485,5m Ft","Forráskód átvéve, modern design kész","Utalás flow implementálva","Rollout áprilisban kezdődik"],"nextDate":"2026.04","progress":90,"complexity":"L","statusLabel":"Redesign élesítés 2026 április","nextMilestone":"Élesítés és rollout kezdete"},{"name":"FinPorta 1. fázis","owner":"Ginzer Ildikó / Farkas Zoltán","status":"uat","details":["Budget: 62,3m Ft","Fejlesztések leszállítva","Élesítés májusban, rollout júliusig"],"nextDate":"2026.02.10","progress":95,"complexity":"S","statusLabel":"UAT 2026.02.10 kezdés","nextMilestone":"UAT kezdés"},{"name":"MKV számlanyitás","owner":"Kiss Zalán / Farkas Zoltán","status":"planning","details":["Budget: 298m Ft","BRS és SAD véleményezés alatt","Megoldás tervezés folyamatban"],"nextDate":"2026.03.16","progress":40,"complexity":"M","statusLabel":"Specifikáció 2026.03.16 zárás","nextMilestone":"Specifikáció zárás"},{"name":"Fraud2 ThreatMark","owner":"Kiss Norbert / Czéh Richárd","status":"live","details":["Budget: 3490,9m Ft (2025-2027)","Viselkedéselemzés éles követő módban","PRM integráció 2026.Q2-ben","Android 2026.Q2-ben tervezett"],"nextDate":"2026.Q2","progress":75,"complexity":"XL","statusLabel":"Netbank és iOS élesítve 2025.Q3","nextMilestone":"PRM integráció és Android release"},{"name":"Corporate Banking Interface","owner":"Kollega-Tarsoly Dániel / Farkas Zoltán","status":"planning","details":["Budget: 790m Ft","Funkcionális demo megtörtént","Nagyvállalati interjúk folyamatban","BRS véleményezés"],"nextDate":"2026.02.26","progress":30,"complexity":"L","statusLabel":"Tervezési fázis 2026.02.26 zárás","nextMilestone":"Tervezési fázis lezárása"},{"name":"Pricing Engine","owner":"Kollega-Tarsoly Dániel / Czéh Richárd","status":"dev","details":["Budget: 1713,5m Ft","Szállító kiválasztva","3 MVP specifikálása párhuzamosan","MVP0 élesítés 2026.Q2"],"nextDate":"2026.02.15","progress":35,"complexity":"XL","statusLabel":"MVP0 tervezés 2026.02.15","nextMilestone":"MVP0 megoldástervezés lezárása"},{"name":"ODPS implementáció","owner":"Czéh Richárd / Pikó Csaba","status":"uat","details":["Budget: 113,4m Ft","Számla egyenleg UAT alatt","Tranzakciók fejlesztés alatt","7x24 monitoring kialakítás"],"nextDate":"2026.02.15","progress":60,"complexity":"M","statusLabel":"Netbank funkciók UAT 2026.02.15","nextMilestone":"Netbank funkciók UAT"},{"name":"Vállalati Loan Origination","owner":"Kollega-Tarsoly Dániel / Czéh Richárd","status":"planning","details":["Budget: 900m Ft (csökkentett)","RFP értékelés megtörtént","BRS elkészült","Implementáció folytatásra döntés előkészítés"],"nextDate":"","progress":25,"complexity":"L","statusLabel":"Döntésre vár","nextMilestone":"Implementáció folytatásról döntés"},{"name":"Dokumentum menedzsment rendszer","owner":"Kollega-Tarsoly Dániel / Czéh Richárd","status":"planning","details":["Budget: 807,5m Ft","Igények összegyűjtve","RFP értékelés folyamatban","Tervezés 2026.Q3 zárás"],"nextDate":"2026.Q3","progress":20,"complexity":"XL","statusLabel":"Scope egyeztetés","nextMilestone":"Tervezés zárása"}],"title":"Aktív projektstream-ek","accent":"#3b82f6","subtitle":"11 folyamatban lévő fejlesztési projekt státusza"},{"icon":"📅","type":"timeline","items":[{"date":"2026.02.10","event":"FinPorta UAT elkezdése","status":"on-track"},{"date":"2026.02.15","event":"Pricing Engine MPV0 megoldástervezés lezárása","status":"on-track"},{"date":"2026.02.20","event":"WMP Advisory élesítés","status":"on-track"},{"date":"2026.03.04","event":"Új digitalizációs köztes réteg és Netbank Drop1 UAT lezárása","status":"on-track"},{"date":"2026.04","event":"Mobil Redesign élesítés és rollout kezdete","status":"on-track"},{"date":"2026.05.15","event":"E-csatorna stream-ek PPI integrációja","status":"on-track"},{"date":"2026.Q2 vége","event":"Újgenerációs Netbank dolgozói pilot (Drop1-2)","status":"on-track"}],"title":"Kulcs mérföldkövek 2026","accent":"#a78bfa","subtitle":"Legfontosabb projekt dátumok és események"}]},{"id":"initiatives","icon":"✨","label":"Új kezdeményezések","sections":[{"icon":"🎯","type":"initiative-cards","items":[{"name":"Clavis NXT bevezetés","scope":"C4/iC4 monolit rendszerek kiváltása modern befektetési platform bevezetésével","budget":"1740m Ft","benefits":["Service architektúra, nagy rendelkezésre állás","Külső integrációk, automatizált SWIFT"],"timeline":"39 hónap","totalBudget":"1740m Ft"},{"name":"Archiválás koncepció kialakítása","scope":"Folyamat, szabályozás, rendszerkivezetés kontrollált megvalósítása","budget":"815m Ft","benefits":["Gyorsabb ügyfélkiszolgálás","Csökkentett üzemeltetési költség"],"timeline":"12 hónap","totalBudget":"815m Ft"},{"name":"Egységes omnichannel üzenet központ","scope":"MAGUS kiváltása modern, biztonságos üzenetküldő rendszerrel","budget":"480m Ft","benefits":["Jobb áteresztőképesség","Marketing kampányok támogatása"],"timeline":"21 hónap","totalBudget":"480m Ft"},{"name":"Zeus-iC4 migráció és állomány átruházás","scope":"Befektetési szolgáltatások áttelepítése egységes környezetbe","budget":"800m Ft","benefits":["Egységes ügyfélkiszolgálás","Profil tisztítás"],"timeline":"11 hónap","totalBudget":"800m Ft"},{"name":"Daily banking loyalty program","scope":"Aktív számla- és e-csatorna használat ösztönzése","budget":"625m Ft","benefits":["Ügyfél aktivitás növelés","Digitális csatornákra terelés"],"timeline":"15 hónap","totalBudget":"625m Ft"},{"name":"CRM","scope":"Egységes kampánytámogatás többszegmensre","budget":"665m Ft","benefits":["Keresztértékesítés támogatása","Adatvezérelt folyamatok"],"timeline":"11 hónap","totalBudget":"665m Ft"},{"name":"IT GRC eszköztár","scope":"Széttagolt IT GRC folyamatok egységesítése","budget":"560m Ft","benefits":["Gyorsabb auditok","Leányvállalatra kiterjeszthető"],"timeline":"14 hónap","totalBudget":"560m Ft"},{"name":"Licence management támogatása","scope":"Egységes, naprakész licenc kezelési folyamat","budget":"200m Ft","benefits":["Audit kockázat csökkentés","Költségoptimalizálás"],"timeline":"14 hónap","totalBudget":"200m Ft"},{"name":"Finporta 2. fázis","scope":"Digitális kölcsönigénylő, előminősítés, AI integráció","budget":"223m Ft","benefits":["Jelzáloghitel folyamat optimalizálás","3rd party frontend támogatás"],"timeline":"14 hónap","totalBudget":"223m Ft"}],"title":"2026-os új témák","accent":"#a78bfa","subtitle":"9 új kezdeményezés EDM terjedelembe emelése"},{"icon":"💡","type":"text","cards":[{"color":"#a78bfa","title":"Teljes projekt költség","content":"6 108m Ft (9 kezdeményezés)"},{"color":"#3b82f6","title":"2026 tervezési budget","content":"636,5m Ft + ÁFA"},{"color":"#22c55e","title":"2026 implementációs budget","content":"3 105,5m Ft + ÁFA"},{"color":"#f97316","title":"Átlagos projekt időtartam","content":"16 hónap (11-39 hónap tartomány)"}],"title":"Új témák összesített hatása","accent":"#eab308","content":"A Management Committee elé terjesztett 9 új kezdeményezés összesen 6 108m Ft teljes budget igénnyel rendelkezik. A 2026-os évre vonatkozóan 636,5m Ft+ÁFA tervezési keret szükséges a scope elemek részletes kidolgozásához, valamint 3 105,5m Ft+ÁFA implementációs keret a megvalósítás megkezdéséhez.","subtitle":"2026-os budget vonzat és tervezési keret"}]},{"id":"actions","icon":"✅","label":"Feladatok","sections":[{"icon":"📋","type":"checklist","items":[{"done":false,"text":"Új témák magas szintű scope tervezése és megoldások értékelése, eredmények bemutatása MC-n","category":"Tervezés"},{"done":false,"text":"E-csatorna stream-ek PPI integrációjának részletei és ütemezés egyeztetése (határidő: 2026.05.15)","category":"Integráció"},{"done":false,"text":"EDM program részére legfeljebb 10 fő IT szakértői kompetencia bevonása","category":"Erőforrás"},{"done":false,"text":"Zeus-iC4 migráció téma kezelési módjáról MC döntés (PPI terület felé átadható)","category":"Döntés"},{"done":false,"text":"IT szakértői támogatás és technológiai koordináció megbízás meghosszabbítása (Mindspire Consulting Zrt., 2026.04.30-ig)","category":"Szerződés"},{"done":false,"text":"CSBABI felé stratégiai megállapodás kötése feladat végrehajtása","category":"Compliance"}],"title":"Akció elemek és feladatok","accent":"#f97316","subtitle":"Management Committee döntésekből eredő teendők"},{"icon":"🤝","type":"text","cards":[{"color":"#64748b","title":"Szakértői keret","content":"116,7m Ft + ÁFA"},{"color":"#3b82f6","title":"Szerződés időtartam","content":"2026.04.30-ig meghosszabbítás"},{"color":"#22c55e","title":"Tervezett létszám bővítés","content":"Max 10 fő IT szakértő"},{"color":"#a78bfa","title":"Szállító","content":"Mindspire Consulting Zrt."}],"title":"Program működés és koordináció","accent":"#64748b","content":"Az EDM Program sikeres működéséhez elengedhetetlen az egységes IT szakértői támogatás és technológiai koordináció. A Mindspire Consulting Zrt.-vel kötött megbízás 2026 április 30-ig kerül meghosszabbításra 116,7m Ft+ÁFA összegben, amely biztosítja a programirányítási, szakértői és koordinációs kapacitásokat a CSBABI által definiált stratégiai megállapodás megkötéséig.","subtitle":"IT szakértői támogatás és technológiai koordináció"},{"icon":"👥","type":"kpi-grid","items":[{"sub":"külsős és banki szakértők","color":"#3b82f6","label":"Jelenlegi résztvevők","value":"~380 fő"},{"sub":"IT szakértői kompetencia","color":"#22c55e","label":"Tervezett bővítés","value":"+10 fő"},{"sub":"aktív együttműködések","color":"#f97316","label":"Szállítói partner","value":"9"},{"sub":"futó + új kezdeményezések","color":"#a78bfa","label":"Összes projektstream","value":"11+9"}],"title":"Program szervezet méret","accent":"#3b82f6","subtitle":"Jelenlegi és tervezett kapacitások"}]}],"header":{"date":"2026.01.29","title":"External Delivery Model (EDM) Program","status":"active","subtitle":"MBH Bank Nyrt. · Management Committee beszámoló"}};
+
+const STATUS_COLORS = { live:"#22c55e", uat:"#eab308", dev:"#3b82f6", planning:"#a78bfa", "new":"#f97316", paused:"#6b7280", active:"#22c55e", complete:"#3b82f6" };
+function statusColor(s) { return STATUS_COLORS[s?.toLowerCase()] || "#6b7280"; }
+
+const ChevronDown = ({ open }) => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+    style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)", flexShrink: 0 }}>
+    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const StatusDot = ({ status }) => {
+  const c = statusColor(status);
+  return <span style={{ width:10, height:10, borderRadius:"50%", backgroundColor:c, display:"inline-block", boxShadow:"0 0 6px "+c+"60", flexShrink:0 }}/>;
+};
+
+const ProgressBar = ({ pct, color="#3b82f6" }) => (
+  <div style={{ width:"100%", height:6, backgroundColor:"#1e293b", borderRadius:3, overflow:"hidden" }}>
+    <div style={{ width: Math.min(pct,100)+"%", height:"100%", backgroundColor:color, borderRadius:3, transition:"width 0.6s cubic-bezier(0.4,0,0.2,1)" }}/>
+  </div>
+);
+
+const KPICard = ({ value, label, sub, color="#3b82f6" }) => (
+  <div style={{ backgroundColor:"#0f172a", borderRadius:10, padding:14, textAlign:"center", border:"1px solid #1e293b" }}>
+    <div style={{ fontSize:24, fontWeight:700, color, fontFamily:"'DM Mono',monospace", lineHeight:1 }}>{value}</div>
+    <div style={{ fontSize:11, color:"#e2e8f0", marginTop:5, fontWeight:500, fontFamily:"'DM Sans',sans-serif" }}>{label}</div>
+    {sub && <div style={{ fontSize:9, color:"#64748b", marginTop:2 }}>{sub}</div>}
+  </div>
+);
+
+const Section = ({ title, subtitle, children, icon, defaultOpen=false, accent="#3b82f6" }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div style={{ backgroundColor:"#0f172a", border:"1px solid "+(open ? accent+"40":"#1e293b"), borderRadius:12, overflow:"hidden", transition:"border-color 0.3s", marginBottom:12 }}>
+      <button onClick={() => setOpen(!open)} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"14px 16px", backgroundColor:"transparent", border:"none", cursor:"pointer", color:"#e2e8f0", textAlign:"left" }}>
+        <span style={{ fontSize:20 }}>{icon}</span>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontSize:15, fontWeight:600, fontFamily:"'DM Sans',sans-serif" }}>{title}</div>
+          {subtitle && <div style={{ fontSize:11, color:"#94a3b8", marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>{subtitle}</div>}
+        </div>
+        <ChevronDown open={open}/>
+      </button>
+      {open && <div style={{ padding:"0 16px 16px", animation:"fadeIn 0.3s ease" }}>{children}</div>}
+    </div>
+  );
+};
+
+const TextSection = ({ section }) => (
+  <>
+    <div style={{ fontSize:13, color:"#cbd5e1", lineHeight:1.7, marginBottom:12 }}>{section.content}</div>
+    {section.cards && section.cards.length > 0 && (
+      <div className="three-col" style={{ display:"grid", gridTemplateColumns:"repeat("+Math.min(section.cards.length,3)+",1fr)", gap:8 }}>
+        {section.cards.map((card,i) => (
+          <div key={i} style={{ backgroundColor:"#1e293b", borderRadius:8, padding:12 }}>
+            <div style={{ fontSize:10, color:card.color||section.accent, fontWeight:600, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.05em" }}>{card.title}</div>
+            <div style={{ fontSize:12, color:"#94a3b8", lineHeight:1.5 }}>{card.content}</div>
+          </div>
+        ))}
+      </div>
+    )}
+  </>
+);
+
+const KPIGridSection = ({ section }) => (
+  <div className="kpi-grid" style={{ display:"grid", gridTemplateColumns:"repeat("+Math.min(section.items.length,4)+",1fr)", gap:8 }}>
+    {section.items.map((item,i) => <KPICard key={i} {...item}/>)}
+  </div>
+);
+
+const StreamCard = ({ item }) => {
+  const [open, setOpen] = useState(false);
+  const sc = statusColor(item.status);
+  return (
+    <div style={{ backgroundColor:"#1e293b", borderRadius:10, padding:14, marginBottom:8, border:"1px solid "+(open ? sc+"30":"#334155"), transition:"border-color 0.3s" }}>
+      <div onClick={() => setOpen(!open)} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
+        <StatusDot status={item.status}/>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+            <span style={{ fontSize:13, fontWeight:600, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{item.name}</span>
+            <span style={{ fontSize:9, fontWeight:600, color:sc, backgroundColor:sc+"15", padding:"2px 6px", borderRadius:4, textTransform:"uppercase", letterSpacing:"0.05em" }}>{item.statusLabel}</span>
+            {item.complexity && <span style={{ fontSize:9, color:"#64748b", fontFamily:"'DM Mono',monospace" }}>{item.complexity}</span>}
+          </div>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0 }}>
+          <span style={{ fontSize:11, color:"#94a3b8", fontWeight:500, fontFamily:"'DM Mono',monospace" }}>{item.progress}%</span>
+          <ChevronDown open={open}/>
+        </div>
+      </div>
+      <div style={{ marginTop:8 }}><ProgressBar pct={item.progress} color={sc}/></div>
+      {open && (
+        <div style={{ marginTop:12, animation:"fadeIn 0.25s ease" }}>
+          <div className="two-col" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:8 }}>
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Next milestone</div>
+              <div style={{ fontSize:12, color:"#e2e8f0" }}>{item.nextMilestone}</div>
+              {item.nextDate && <div style={{ fontSize:10, color:"#94a3b8", marginTop:2, fontFamily:"'DM Mono',monospace" }}>{item.nextDate}</div>}
+            </div>
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Owner</div>
+              <div style={{ fontSize:12, color:"#e2e8f0" }}>{item.owner}</div>
+            </div>
+          </div>
+          {item.details && item.details.length > 0 && (
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Details</div>
+              {item.details.map((d,i) => <div key={i} style={{ fontSize:12, color:"#cbd5e1", marginBottom:4, display:"flex", gap:6 }}><span style={{ color:"#475569", flexShrink:0 }}>&#9656;</span><span>{d}</span></div>)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ProgressCardsSection = ({ section }) => (
+  <div>{section.items.map((item,i) => <StreamCard key={i} item={item}/>)}</div>
+);
+
+const InitCard = ({ item }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ backgroundColor:"#1e293b", borderRadius:10, padding:14, marginBottom:8, border:"1px solid "+(open ? "#f9731630":"#334155"), transition:"border-color 0.3s" }}>
+      <div onClick={() => setOpen(!open)} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
+        <span style={{ fontSize:9, color:"#f97316", backgroundColor:"#f9731615", padding:"2px 6px", borderRadius:4, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.05em", flexShrink:0 }}>NEW</span>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontSize:13, fontWeight:600, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{item.name}</div>
+        </div>
+        <div style={{ textAlign:"right", flexShrink:0 }}>
+          <div style={{ fontSize:12, fontWeight:600, color:"#f97316", fontFamily:"'DM Mono',monospace" }}>{item.budget}</div>
+        </div>
+        <ChevronDown open={open}/>
+      </div>
+      {open && (
+        <div style={{ marginTop:12, animation:"fadeIn 0.25s ease" }}>
+          <div className="init-meta" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8, marginBottom:8 }}>
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Total budget</div>
+              <div style={{ fontSize:12, color:"#e2e8f0", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{item.totalBudget}</div>
+            </div>
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Timeline</div>
+              <div style={{ fontSize:12, color:"#e2e8f0", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{item.timeline}</div>
+            </div>
+            <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+              <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>Budget</div>
+              <div style={{ fontSize:12, color:"#f97316", fontWeight:600, fontFamily:"'DM Mono',monospace" }}>{item.budget}</div>
+            </div>
+          </div>
+          <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10, marginBottom:8 }}>
+            <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Scope</div>
+            <div style={{ fontSize:12, color:"#cbd5e1", lineHeight:1.5 }}>{item.scope}</div>
+          </div>
+          <div style={{ backgroundColor:"#0f172a", borderRadius:8, padding:10 }}>
+            <div style={{ fontSize:9, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>Benefits</div>
+            {item.benefits.map((b,i) => <div key={i} style={{ fontSize:12, color:"#a7f3d0", marginBottom:3, display:"flex", gap:6 }}><span style={{ color:"#22c55e", flexShrink:0 }}>&#10003;</span><span>{b}</span></div>)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const InitiativeCardsSection = ({ section }) => (
+  <div>{section.items.map((item,i) => <InitCard key={i} item={item}/>)}</div>
+);
+
+const DataTableSection = ({ section }) => {
+  const lastIdx = section.rows.length - 1;
+  return (
+    <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
+      <table style={{ width:"100%", borderCollapse:"separate", borderSpacing:"0 3px", fontSize:11, minWidth:420 }}>
+        <thead><tr>
+          {section.columns.map(col => (
+            <th key={col.key} style={{ textAlign:col.align||"left", padding:"6px 8px", color:"#64748b", fontWeight:500, fontSize:9, textTransform:"uppercase" }}>{col.label}</th>
+          ))}
+        </tr></thead>
+        <tbody>
+          {section.rows.map((row,ri) => {
+            const hl = section.highlightLastRow && ri === lastIdx;
+            return (
+              <tr key={ri} style={{ backgroundColor: hl ? "#0f172a" : "#1e293b" }}>
+                {section.columns.map((col,ci) => (
+                  <td key={col.key} style={{
+                    padding:"7px 8px",
+                    textAlign: col.align||"left",
+                    borderRadius: ci===0?"6px 0 0 6px":ci===section.columns.length-1?"0 6px 6px 0":undefined,
+                    color: hl?"#f97316":ci===0?"#e2e8f0":"#94a3b8",
+                    fontWeight: hl||ci===0?600:400,
+                    fontFamily: ci>0?"'DM Mono',monospace":undefined,
+                    borderTop: hl?"2px solid #f97316":undefined,
+                  }}>{String(row[col.key]??"")}</td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const ChecklistSection = ({ section }) => (
+  <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+    {section.items.map((item,i) => (
+      <div key={i} style={{ fontSize:12, display:"flex", gap:6, alignItems:"flex-start" }}>
+        <span style={{ color: item.done?"#22c55e":"#64748b", flexShrink:0 }}>{item.done?"\u2713":"\u25CB"}</span>
+        <span style={{ color: item.done?"#a7f3d0":"#94a3b8" }}>
+          {item.text}{item.category && <span style={{ marginLeft:6, fontSize:9, color:"#64748b" }}>({item.category})</span>}
+        </span>
+      </div>
+    ))}
+  </div>
+);
+
+const DecisionListSection = ({ section }) => (
+  <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+    {section.items.map(item => (
+      <div key={item.number} style={{ backgroundColor:"#1e293b", borderRadius:8, padding:12, display:"flex", gap:10, alignItems:"flex-start" }}>
+        <div style={{ width:22, height:22, borderRadius:6, backgroundColor:"#f9731620", color:"#f97316", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:700, flexShrink:0, fontFamily:"'DM Mono',monospace" }}>{item.number}</div>
+        <div style={{ fontSize:12, color:"#cbd5e1", lineHeight:1.5 }}>{item.text}</div>
+      </div>
+    ))}
+  </div>
+);
+
+const TimelineSection = ({ section }) => (
+  <div style={{ marginLeft:12, borderLeft:"1px solid #334155", paddingLeft:16 }}>
+    {section.items.map((item,i) => (
+      <div key={i} style={{ position:"relative", marginBottom:16 }}>
+        <div style={{ position:"absolute", left:-21, top:4, width:10, height:10, borderRadius:"50%", border:"2px solid "+(item.status?statusColor(item.status):section.accent), backgroundColor:(item.status?statusColor(item.status):section.accent)+"30" }}/>
+        <div style={{ fontSize:10, color:"#94a3b8", fontWeight:500, fontFamily:"'DM Mono',monospace" }}>{item.date}</div>
+        <div style={{ fontSize:12, color:"#e2e8f0", marginTop:2 }}>{item.event}</div>
+      </div>
+    ))}
+  </div>
+);
+
+const SectionRenderer = ({ section, isFirst }) => {
+  const render = () => {
+    switch(section.type) {
+      case "text": return <TextSection section={section}/>;
+      case "kpi-grid": return <KPIGridSection section={section}/>;
+      case "progress-cards": return <ProgressCardsSection section={section}/>;
+      case "initiative-cards": return <InitiativeCardsSection section={section}/>;
+      case "data-table": return <DataTableSection section={section}/>;
+      case "checklist": return <ChecklistSection section={section}/>;
+      case "decision-list": return <DecisionListSection section={section}/>;
+      case "timeline": return <TimelineSection section={section}/>;
+      default: return null;
+    }
+  };
+  return (
+    <Section title={section.title} subtitle={section.subtitle} icon={section.icon} accent={section.accent} defaultOpen={isFirst}>
+      {render()}
+    </Section>
+  );
+};
+
+function Dashboard() {
+  const [activeTab, setActiveTab] = useState(DATA.tabs[0]?.id || "");
+  const activeTabData = DATA.tabs.find(t => t.id === activeTab);
+  const hs = DATA.header.status || "active";
+  const hc = statusColor(hs);
+
+  return (
+    <div style={{ minHeight:"100vh", backgroundColor:"#020617", color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>
+      <div style={{ background:"linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)", borderBottom:"1px solid #1e293b", padding:"20px 16px 12px", position:"sticky", top:0, zIndex:10 }}>
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:12 }}>
+          <div>
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+              <div style={{ width:7, height:7, borderRadius:"50%", backgroundColor:hc, animation:hs==="active"?"pulse 2s ease-in-out infinite":undefined, boxShadow:"0 0 8px "+hc+"60" }}/>
+              <span style={{ fontSize:9, color:hc, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.1em", fontFamily:"'DM Mono',monospace" }}>
+                {hs==="active"?"Active":hs==="complete"?"Complete":"Planning"}
+              </span>
+            </div>
+            <h1 style={{ fontSize:20, fontWeight:700, color:"#f8fafc", letterSpacing:"-0.02em" }}>{DATA.header.title}</h1>
+            <p style={{ fontSize:11, color:"#64748b", marginTop:3 }}>{DATA.header.subtitle}</p>
+          </div>
+          <div style={{ textAlign:"right", flexShrink:0 }}>
+            <div style={{ fontSize:9, color:"#64748b", fontFamily:"'DM Mono',monospace" }}>{DATA.header.date}</div>
+          </div>
+        </div>
+        <div style={{ display:"flex", gap:3, overflowX:"auto", WebkitOverflowScrolling:"touch", msOverflowStyle:"none", scrollbarWidth:"none" }}>
+          {DATA.tabs.map(t => (
+            <button key={t.id} onClick={() => setActiveTab(t.id)} style={{ padding:"7px 14px", borderRadius:8, border:"none", backgroundColor:activeTab===t.id?"#3b82f6":"transparent", color:activeTab===t.id?"#fff":"#94a3b8", fontSize:12, fontWeight:500, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap", transition:"all 0.2s" }}>
+              <span style={{ marginRight:4 }}>{t.icon}</span>{t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding:"12px 16px 60px", maxWidth:900, margin:"0 auto" }}>
+        {DATA.kpis && DATA.kpis.length > 0 && (
+          <div className="kpi-grid" style={{ display:"grid", gridTemplateColumns:"repeat("+Math.min(DATA.kpis.length,4)+",1fr)", gap:8, marginBottom:14 }}>
+            {DATA.kpis.map((kpi,i) => <KPICard key={i} {...kpi}/>)}
+          </div>
+        )}
+        {activeTabData && (
+          <div style={{ animation:"fadeIn 0.3s ease" }}>
+            {activeTabData.sections.map((section,i) => (
+              <SectionRenderer key={activeTab+"-"+i} section={section} isFirst={i===0}/>
+            ))}
+          </div>
+        )}
+      </div>
+      <div style={{ position:"fixed", bottom:0, left:0, right:0, padding:"8px 16px", backgroundColor:"#020617e0", backdropFilter:"blur(8px)", borderTop:"1px solid #1e293b", display:"flex", justifyContent:"center" }}>
+        <span style={{ fontSize:9, color:"#475569" }}>Generated by Strategos</span>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(React.createElement(Dashboard), document.getElementById("root"));
+</script>
+</body>
+</html>
